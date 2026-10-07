@@ -2,29 +2,43 @@ name: Build Android TWA (bubblewrap)
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   build-twa:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Java
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install bubblewrap
         run: |
           npm install -g @bubblewrap/cli
-      - name: Build TWA
-        env:
-          # Provide repository URL (must be HTTPS and reachable)
-          REPO_URL: ${{ secrets.TWA_REPO_URL }}
+
+      - name: Configure bubblewrap (skip JDK prompt)
         run: |
-          # This assumes azan-watch is hosted publicly and manifest is available.
-          # Customize package id and other fields as needed.
-          npx bubblewrap init --manifest=$REPO_URL/manifest.json --packageId=com.example.azanwatch --path=twa-output --manifestVersionCode=1 
-          cd twa-output 
-          npx bubblewrap build --output=output 
+          mkdir -p ~/.bubblewrap
+          echo '{"jdkPath":"'"$JAVA_HOME"'"}' > ~/.bubblewrap/config.json
+
+      - name: Build TWA
+        run: |
+          npx bubblewrap init \
+            --manifest=https://qariclinic.github.io/azan_watch_package_v2/manifest.json \
+            --packageId=com.qariclinic.azanwatch \
+            --path=twa-output \
+            --manifestVersionCode=1 \
+            --skipPwaValidation
+          cd twa-output
+          npx bubblewrap build
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
