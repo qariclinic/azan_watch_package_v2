@@ -20,21 +20,16 @@ jobs:
         run: |
           npm install -g @bubblewrap/cli
 
-      - name: Configure bubblewrap (skip JDK prompt)
-        run: |
-          mkdir -p ~/.bubblewrap
-          echo '{"jdkPath":"'"$JAVA_HOME"'"}' > ~/.bubblewrap/config.json
-
       - name: Build TWA
         run: |
-          npx bubblewrap init \
+          yes | npx bubblewrap init \
             --manifest=https://qariclinic.github.io/azan_watch_package_v2/manifest.json \
             --packageId=com.qariclinic.azanwatch \
             --path=twa-output \
             --manifestVersionCode=1 \
             --skipPwaValidation
           cd twa-output
-          npx bubblewrap build
+          yes | npx bubblewrap build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
