@@ -1,0 +1,16 @@
+{
+  "name": "azan-watch-electron",
+  "version": "1.0.0",
+  "description": "Azan Watch - Electron wrapper for the Azan Watch HTML (مفتی شعیب خان آلائی)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . AzanWatch --platform=win32,linux --arch=x64 --out=dist --overwrite"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-packager": "^17.1.0"
+  }
+}
